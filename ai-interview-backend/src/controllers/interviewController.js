@@ -5,7 +5,7 @@ const { generateAdaptiveQuestion } = require("../services/llm/adaptiveQuestionEn
 const { evaluateAnswer } = require("../services/llm/answerEvaluator");
 const { countFillerWords } = require("../services/speechAnalysis/fillerWordDetector");
 
-const TOTAL_QUESTIONS = 5; // matches frontend InterviewPage.jsx TOTAL_QUESTIONS
+const TOTAL_QUESTIONS = 9; // matches frontend InterviewPage.jsx TOTAL_QUESTIONS
 
 async function startSession(req, res, next) {
   try {

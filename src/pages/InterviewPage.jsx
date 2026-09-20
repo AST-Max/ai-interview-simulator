@@ -10,7 +10,7 @@ import { InterviewSessionContext } from "../context/InterviewSessionContext";
 import { useTextToSpeech } from "../hooks/useTextToSpeech";
 import { startInterviewSession, submitAnswer, endInterviewSession } from "../services/interviewService";
 
-const TOTAL_QUESTIONS = 5; // demo length; adjust as needed
+const TOTAL_QUESTIONS = 9; // demo length; adjust as needed
 
 export default function InterviewPage() {
   const session = useContext(InterviewSessionContext);
@@ -39,7 +39,7 @@ export default function InterviewPage() {
 
   async function handleAnswerSubmit(answerText) {
     setSubmitting(true);
-    const result = await submitAnswer(session.sessionId, session.currentQuestion.id, answerText);
+    const result = await submitAnswer(session.sessionId, session.currentQuestion, answerText);
 
     session.addToHistory({
       question: session.currentQuestion.text,
@@ -64,7 +64,7 @@ export default function InterviewPage() {
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
-      <h1 className="text-xl font-bold text-center mb-4 text-white">Mock Interview — {session.targetRole}</h1>
+      <h1 className="text-xl font-bold text-center mb-4 text-heading">Mock Interview — {session.targetRole}</h1>
 
       <AvatarViewer isSpeaking={isSpeaking} />
 

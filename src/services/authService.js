@@ -3,7 +3,7 @@ import api from "./api";
 // NOTE: Backend not built yet. These functions call real endpoints,
 // but will throw network errors until backend/routes/authRoutes.js exists.
 // Swap USE_MOCK to false once backend is ready.
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 export async function loginUser(email, password) {
   if (USE_MOCK) {

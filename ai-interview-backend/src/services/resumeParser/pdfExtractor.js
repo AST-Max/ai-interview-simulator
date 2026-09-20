@@ -5,6 +5,10 @@ const pdfParse = require("pdf-parse");
 async function extractTextFromPDF(filePath) {
   const dataBuffer = fs.readFileSync(filePath);
   const data = await pdfParse(dataBuffer);
+
+  console.log("DEBUG PDF extracted text length:", data.text.length);
+  console.log("DEBUG PDF extracted text preview:", data.text.substring(0, 300));
+
   return data.text;
 }
 

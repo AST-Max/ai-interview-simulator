@@ -28,6 +28,14 @@ async function generateAdaptiveQuestion(conversationHistory, resumeText, targetR
     )
     .join("\n\n");
 
+  // Explicit list of already-asked questions, given directly to Gemini
+  // so it has a concrete list to avoid instead of a vague "don't repeat" instruction.
+  const askedQuestions = conversationHistory.map((e) => `- ${e.question}`).join("\n");
+
+  // Explicit list of topics/skills/projects already touched, extracted from
+  // the questions themselves - reinforces variety even when difficulty repeats.
+  const topicsUsedCount = conversationHistory.length;
+
   const lastEntry = conversationHistory[conversationHistory.length - 1];
 
   const prompt = `
@@ -38,20 +46,34 @@ Candidate's resume:
 ${resumeText}
 """
 
-Conversation so far:
+Conversation so far (${topicsUsedCount} question(s) asked):
 ${historyText}
 
 The candidate's most recent answer scored ${lastEntry.contentScore}/10.
 
-Adaptive rule to follow:
-- If the last score was 0-4 (weak): ask an EASIER question, either a simpler related concept
-  or a more basic version of the same topic, to help the candidate regain confidence.
-- If the last score was 5-7 (average): ask a MEDIUM difficulty question, either a new topic
-  from their resume or a moderate follow-up.
-- If the last score was 8-10 (strong): ask a HARDER follow-up question that goes deeper into
-  the same topic, the way a real interviewer probes further when impressed.
+STEP 1 - Pick the DIFFICULTY (independent of topic):
+- Score 0-4 (weak): pick an EASIER difficulty than the last question.
+- Score 5-7 (average): keep a SIMILAR difficulty to the last question.
+- Score 8-10 (strong): pick a HARDER difficulty than the last question.
 
-Do not repeat a question already asked above. Ask ONE new question only.
+STEP 2 - Pick the TOPIC (this is separate from difficulty - never reuse a topic):
+Look at the resume and pick a skill, project, tool, or experience that has NOT been the
+subject of any question above. Scan the whole resume - education, projects, internships,
+skills list, certifications - and choose something fresh. If every distinct resume item has
+already been covered, pick a general behavioral or role-relevant question instead (e.g.
+teamwork, a challenge faced, a design trade-off) rather than repeating a technical topic.
+
+CRITICAL RULES:
+- Do NOT ask any question with similar meaning to these already-asked questions:
+${askedQuestions}
+- Do NOT default to generic filler questions like "what is REST API" or "how would you scale
+  this to 1 million users" unless the resume specifically supports that exact context and it
+  has not been asked before.
+- Every question must reference something SPECIFIC and NAMED from the resume text above
+  (an actual project name, company name, or technology explicitly listed) - not a vague
+  category.
+
+Ask ONE new question only.
 
 Return ONLY raw JSON (no markdown) in exactly this shape:
 {
@@ -60,7 +82,17 @@ Return ONLY raw JSON (no markdown) in exactly this shape:
 }
 `;
 
-  return await askGeminiForJSON(prompt);
+  console.log("========== ADAPTIVE PROMPT SENT ==========");
+  console.log(prompt);
+  console.log("========== END PROMPT ==========");
+
+  const result = await askGeminiForJSON(prompt);
+
+  console.log("========== GEMINI RAW RESULT ==========");
+  console.log(JSON.stringify(result, null, 2));
+  console.log("========== END RESULT ==========");
+
+  return result;
 }
 
 module.exports = { generateAdaptiveQuestion };

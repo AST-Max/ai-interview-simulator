@@ -38,7 +38,7 @@ export default function FeedbackReportPage() {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold text-center mb-6 text-white">Your Interview Feedback</h1>
+      <h1 className="text-2xl font-bold text-center mb-6 text-heading">Your Interview Feedback</h1>
 
       <OverallScore
         overallScore={feedback.overallScore}

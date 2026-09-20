@@ -1,6 +1,6 @@
 import api from "./api";
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // Uploads resume file + selected role, returns ATS analysis report
 export async function uploadResumeForATS(file, targetRole) {

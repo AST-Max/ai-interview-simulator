@@ -1,8 +1,9 @@
 import api from "./api";
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 // Mock question bank simulating adaptive difficulty behavior
+// (kept only for USE_MOCK = true fallback/demo purposes)
 const MOCK_QUESTIONS = {
   easy: "Can you explain what REST API means in simple terms?",
   medium: "Walk me through how you designed the database schema for your last project.",
@@ -26,8 +27,12 @@ export async function startInterviewSession(resumeId, targetRole) {
   return res.data;
 }
 
-// Submits candidate's answer, backend runs adaptiveQuestionEngine to pick next question
-export async function submitAnswer(sessionId, questionId, answerText) {
+// Submits candidate's answer, backend runs adaptiveQuestionEngine to pick next question.
+// IMPORTANT: the backend controller (submitAnswer in interviewController.js) expects
+// { sessionId, questionText, questionDifficulty, answerText } - it needs the actual
+// question text + difficulty to evaluate the answer and generate the next question,
+// not just the question's id.
+export async function submitAnswer(sessionId, currentQuestion, answerText) {
   if (USE_MOCK) {
     await fakeDelay(1000);
     // crude mock: longer answers are treated as "stronger" to demo adaptive difficulty
@@ -43,7 +48,12 @@ export async function submitAnswer(sessionId, questionId, answerText) {
       isSessionComplete: false,
     };
   }
-  const res = await api.post("/interview/answer", { sessionId, questionId, answerText });
+  const res = await api.post("/interview/answer", {
+    sessionId,
+    questionText: currentQuestion.text,
+    questionDifficulty: currentQuestion.difficulty,
+    answerText,
+  });
   return res.data;
 }
 

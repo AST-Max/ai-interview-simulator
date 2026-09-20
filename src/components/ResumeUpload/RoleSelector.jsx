@@ -9,7 +9,7 @@ export default function RoleSelector({ value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required
-        className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full border border-surfaceBorder bg-darker text-heading rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary [color-scheme:dark]"
       >
         <option value="">Select a role</option>
         {JOB_ROLES.map((role) => (

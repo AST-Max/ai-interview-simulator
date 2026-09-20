@@ -15,8 +15,15 @@ export function useTextToSpeech() {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "en-IN";
-    utterance.rate = 1;
+    utterance.rate = 0.95;
     utterance.pitch = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice =
+      voices.find((v) => v.name.includes("Google") && v.lang.startsWith("en")) ||
+      voices.find((v) => v.lang === "en-IN") ||
+      voices[0];
+    if (preferredVoice) utterance.voice = preferredVoice;
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => {
