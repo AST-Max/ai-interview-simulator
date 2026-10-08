@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Floating Animation for the Card */
+@keyframes custom-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+.animate-custom-float {
+  animation: custom-float 4.5s ease-in-out infinite;
+}
+
+/* Tera baaki ka CSS yahan se shuru hota hai (agar kuch aur hai toh) */
